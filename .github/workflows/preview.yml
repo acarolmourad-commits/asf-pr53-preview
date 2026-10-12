@@ -1,0 +1,32 @@
+name: Publish isolated PR53 preview
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: pr53-preview-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build pinned static preview
+        run: python3 build_preview.py
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy this preview repository only
+        id: deployment
+        uses: actions/deploy-pages@v4
