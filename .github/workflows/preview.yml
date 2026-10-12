@@ -1,4 +1,4 @@
-name: Publish isolated PR53 preview
+name: Publish isolated review previews
 on:
   push:
     branches: [main]
@@ -12,8 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build pinned static preview
-        run: python3 build_preview.py
+      - name: Build pinned static previews
+        run: |
+          python3 build_preview.py
+          python3 build_home_review.py
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
